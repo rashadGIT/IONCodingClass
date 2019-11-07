@@ -1,0 +1,26 @@
+<html>
+    <head>
+            <link rel="stylesheet" type="text/css" href="EyeTest.css">
+    </head>
+    <body>
+        <center>
+            <p id="One" class="One">A</p>
+            <p id="Two" class="Two">E</p>
+            <p id="Three" class="Three">I</p>
+            <p id="Four" class="Four">O</p>
+            <p id="Five" class="Five">U</p>
+            <p id="Six" class="Six">Y</p>
+        </center>
+        <script src="../script.js"></script>
+        <script>
+            let min = 65;
+            let max = 90;
+            document.getElementById("One").innerHTML = String.fromCharCode(randomIntFromInterval(min, max));
+            document.getElementById("Two").innerHTML = String.fromCharCode(randomIntFromInterval(min, max));
+            document.getElementById("Three").innerHTML = String.fromCharCode(randomIntFromInterval(min, max));
+            document.getElementById("Four").innerHTML = String.fromCharCode(randomIntFromInterval(min, max));
+            document.getElementById("Five").innerHTML = String.fromCharCode(randomIntFromInterval(min, max));
+            document.getElementById("Six").innerHTML = String.fromCharCode(randomIntFromInterval(min, max));
+        </script>
+    </body>
+</html>
