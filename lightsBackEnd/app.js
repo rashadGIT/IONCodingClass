@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const axios = require('axios');
 const port = 3000
+require('dotenv').config();
 
 app.use((req, res, next)=> {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -12,6 +13,8 @@ app.get('/on', (req, res) => {
     let brightness = 254;
     let color = 49999;
     let sat = 40;
+    let num = 1;
+
     if(typeof req.query.bright !== 'undefined' && req.query.bright != 'undefined' && req.query.bright) brightness = parseInt(req.query.bright);
 
     if(typeof req.query.color !== 'undefined' && req.query.color != 'undefined' && req.query.color) {
@@ -55,11 +58,10 @@ app.get('/on', (req, res) => {
             }        
         }
     }
-    console.log(brightness)
-    console.log(color)
-    console.log(sat)
 
-    axios.put('http://192.168.1.4/api/GNXuLztUrakoOrv8RWauzmChpO5GlPdaTo8wLXag/lights/3/state', 
+    if(typeof req.query.num !== 'undefined' && req.query.num != 'undefined' && req.query.num) num = parseInt(req.query.num);
+
+    axios.put(process.env.lightsIP + num +'/state', 
     {
         "on":true,
         "bri": brightness,
@@ -79,7 +81,13 @@ app.get('/on', (req, res) => {
 });
 
 app.get('/off', (req, res) => {
-    axios.put('http://192.168.1.4/api/GNXuLztUrakoOrv8RWauzmChpO5GlPdaTo8wLXag/lights/3/state', 
+
+    let num = 1;
+    if(typeof req.query.num !== 'undefined' && req.query.num != 'undefined' && req.query.num) num = parseInt(req.query.num);
+
+    console.log(num)
+
+    axios.put(process.env.lightsIP + num +'/state', 
     {
         "on":false
     })
@@ -95,5 +103,56 @@ app.get('/off', (req, res) => {
     res.send('GoodBye New World!')
 });
 
+app.get('/offAll', async (req, res) => {
+
+    let lights = await axios.get(process.env.lightsIP)
+    .then(x => Object.getOwnPropertyNames(x.data));
+    
+    for(let i = 0; i < lights.length; i++){
+        axios.put(process.env.lightsIP + lights[i] +'/state', 
+        {
+            "on":false
+        })
+        .then(function (response) {
+            //console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+        .then(function () {
+            // always executed
+        }); 
+    }
+    res.send('GoodBye New World!')
+});
+
+app.get('/onAll', async (req, res) => {
+    let brightness = 254;
+    let color = 49999;
+    let sat = 40;
+
+    let lights = await axios.get(process.env.lightsIP)
+    .then(x => Object.getOwnPropertyNames(x.data));
+
+    for(let i = 0; i < lights.length; i++){
+        axios.put(process.env.lightsIP + lights[i] +'/state', 
+        {
+            "on":true,
+            "bri": brightness,
+            "hue":color,
+            "sat" : sat
+        })
+        .then(function (response) {
+        console.log(response.data);
+        })
+        .catch(function (error) {
+        console.log(error);
+        })
+        .then(function () {
+        // always executed
+        }); 
+    }
+    res.send('Hello New World!')
+});
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
